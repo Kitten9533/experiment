@@ -1,0 +1,16 @@
+{
+  "name": "experiment",
+  "version": "0.1.0",
+  "main": "main.js",
+  "authors": "123",
+  "description": "description",
+  "scripts": {
+    "start": "electron . --debug",
+    "build": "node packager.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "electron": "^2.0.7",
+    "electron-packager": "^12.2.0"
+  }
+}

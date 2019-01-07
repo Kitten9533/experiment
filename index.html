@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=no">
+  <title>index</title>
+  <style>
+    body {
+      /* 最小直径 */
+      --minDiameter: 30;
+      /* 最大直径 */
+      --maxDiameter: 300;
+      /* 动画持续时间 */
+      --animation-mymove-duration: 2;
+      --background: #000;
+    }
+
+    html, body, #app{
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    @keyframes mymove {
+      from {
+        width: calc(var(--minDiameter) * 1px);
+        height: calc(var(--minDiameter) * 1px);
+        margin-left: calc(var(--minDiameter) / 2 * -1px);
+        margin-top: calc(var(--minDiameter) / 2 * -1px);
+      }
+
+      to {
+        width: calc(var(--maxDiameter) * 1px);
+        height: calc(var(--maxDiameter) * 1px);
+        margin-left: calc(var(--maxDiameter) / 2 * -1px);
+        margin-top: calc(var(--maxDiameter) / 2 * -1px);
+      }
+    }
+
+    @-webkit-keyframes mymove {
+      from {
+        width: calc(var(--minDiameter) * 1px);
+        height: calc(var(--minDiameter) * 1px);
+        margin-left: calc(var(--minDiameter) / 2 * -1px);
+        margin-top: calc(var(--minDiameter) / 2 * -1px);
+      }
+
+      to {
+        width: calc(var(--maxDiameter) * 1px);
+        height: calc(var(--maxDiameter) * 1px);
+        margin-left: calc(var(--maxDiameter) / 2 * -1px);
+        margin-top: calc(var(--maxDiameter) / 2 * -1px);
+      }
+    }
+
+    #box {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      border-radius: 50%;
+      background: var(--background);
+      width: calc(var(--minDiameter) * 1px);
+      height: calc(var(--minDiameter) * 1px);
+      margin-left: calc(var(--minDiameter) / 2 * -1px);
+      margin-top: calc(var(--minDiameter) / 2 * -1px);
+    }
+
+    #box.move-end{
+      width: calc(var(--maxDiameter) * 1px);
+      height: calc(var(--maxDiameter) * 1px);
+      margin-left: calc(var(--maxDiameter) / 2 * -1px);
+      margin-top: calc(var(--maxDiameter) / 2 * -1px);
+    }
+
+    .menu, .menu-2 {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 270px;
+      height: 100%;
+      border-right: 1px solid #f2f0f5;
+      z-index: 999;
+      background: #fff;
+    }
+
+    .menu-2{
+      border: none;
+      background: none;
+    }
+
+    .menu-list {
+      box-sizing: border-box;
+      padding: 20px;
+      width: 100%;
+      height: 100%;
+      overflow: scroll;
+    }
+    .menu-item{
+      width: 100%;
+      margin-bottom: 4px;
+    }
+    .menu-item .item-label, .menu-item .item-input{
+      display: block;
+      width: 100%;
+      font-size: 14px;
+      line-height: 22px;
+    }
+    .menu-item .item-label-desc{
+      margin: 0;
+      padding: 0;
+      font-size: 12px;
+    }
+    .menu-item .item-label{
+      margin-bottom: 3px;
+    }
+    .menu-item .item-input{
+      border-radius: 2px;
+      outline: none;
+      border: 1px solid #f2f0f5;
+      line-height: 24px;
+      text-indent: 10px;
+    }
+    .menu-button{
+      width: 100%;
+    }
+    .menu-button .hide-btn, 
+    .menu-button .start-btn,
+    .menu-button .stop-btn{
+      display: inline-block;
+      width: 70px;
+      height: 30px;
+      font-size: 14px;
+      color: #fff;
+      line-height: 30px;
+      text-align: center;
+      background: #2593fb;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .info{
+      margin-top: 20px;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+</head>
+
+<body>
+  <div id="app">
+    <div id="box" class="box"></div>
+    <div class="menu" v-show="showMenu">
+      <div class="menu-list">
+        <div class="menu-item">
+          <label class="item-label">黑点由小变大时间(s)：</label>
+          <input class="item-input" type="number" v-model.number="animationDuration" />
+        </div>
+        <div class="menu-item">
+          <label class="item-label">大点维持时间(s)：</label>
+          <input class="item-input" type="number" v-model.number="stayTime" />
+        </div>
+        <div class="menu-item">
+          <label class="item-label">循环间隔时间(s)：</label>
+          <input class="item-input" type="number" v-model.number="betweenTime" />
+        </div>
+        <div class="menu-item">
+          <label class="item-label">循环次数：</label>
+          <input class="item-input" type="number" v-model.number="maxCount" />
+        </div>
+        <div class="menu-item">
+          <label class="item-label">最小直径(px)：</label>
+          <input class="item-input" type="number" v-model.number="minDiameter" />
+        </div>
+        <div class="menu-item">
+          <label class="item-label">最大直径(px)：</label>
+          <input class="item-input" type="number" v-model.number="maxDiameter" />
+        </div>
+        <!-- <div class="menu-item">
+          <p class="item-label-desc">注: 动画共{{animationDuration}}s, 前{{animationDuration/2}}s变化到最大直径, 后保持不变</p>
+        </div> -->
+        <div class="menu-item">
+          <label class="item-label">点击开始按钮几秒后执行动画(s)：</label>
+          <input class="item-input" type="number" v-model.number="delay" />
+        </div>
+        <div class="menu-button">
+          <div class="start-btn" @click="start">开始</div>
+          <!-- <div class="stop-btn" @click="stop">停止</div> -->
+          <div class="hide-btn" @click="toggle">隐藏</div>
+          <div class="hide-btn" @click="exit">退出应用</div>
+        </div>
+        <div class="menu-item">
+          <p class="item-label-desc"></p>
+          <p class="item-label-desc">1.直径的px单位需要自行转换成厘米</p>
+          <p class="item-label-desc">2.已经完成第{{count}}次循环</p>
+          <p class="item-label-desc">3.当前参数：</p>
+          <p class="item-label-desc">黑点由小变大时间(s)：{{this.animationDuration}}s</p>
+          <p class="item-label-desc">大点维持时间(s)：{{this.stayTime}}s</p>
+          <p class="item-label-desc">循环间隔时间(s)：{{this.betweenTime}}s</p>
+          <p class="item-label-desc">循环次数(s)：{{this.maxCount}}</p>
+          <p class="item-label-desc">最小直径(px)：{{this.minDiameter}}px</p>
+          <p class="item-label-desc">最大直径(px)：{{this.maxDiameter}}px</p>
+          
+        </div>
+        <!-- <div class="info">
+          <p>当前参数:</p>
+          <p>最小直径(px): {{minDiameter}}</p>
+          <p>最大直径(px): {{maxDiameter}}</p>
+          <p>动画持续时间(s): {{animationDuration}}</p>
+        </div> -->
+      </div>
+    </div>
+    <div class="menu-2" v-show="!showMenu" @click="toggle"></div>
+  </div>
+</body>
+<script>
+  var app = new Vue({
+    el: '#app',
+    data() {
+      return {
+        showMenu: true,
+        minDiameter: 30,
+        maxDiameter: 300,
+        animationDuration: 0.25,
+        delay: 0,
+        stayTime: 0.25,
+        betweenTime: 0.5,
+        maxCount: 3,
+        count: 0,
+        animation: 'mymove',
+        timer1: null,
+        timer2: null,
+      }
+    },
+    mounted() {
+      var animationDiv = document.getElementById("box");
+      animationDiv.addEventListener('webkitAnimationEnd', this.animationend, false);
+      animationDiv.addEventListener('animationend', this.animationend, false);
+      this.removeAni();
+      animationDiv.classList.remove('move-end');
+    },
+    computed: {
+      moveAnimation: function () {
+        return `${this.animation} ${this.animationDuration}s linear 1`;
+      }
+    },
+    methods: {
+      toggle() {
+        this.showMenu = !this.showMenu;
+      },
+      animationend() {
+        var animationDiv = document.getElementById("box");
+        animationDiv.classList.add('move-end');
+        this.count++;
+        if (this.count >= this.maxCount) {
+          // 达到最大次数 清空
+          setTimeout(() => {
+            clearTimeout(this.timer1);
+            clearTimeout(this.timer2);
+            this.removeAni();
+          }, this.stayTime * 1000);
+          return;
+        }
+        this.timer1 = setTimeout(() => {
+          this.removeAni();
+          animationDiv.classList.remove('move-end');
+        }, this.stayTime * 1000);
+        this.timer2 = setTimeout(() => {
+          this.addAni();
+        }, (this.stayTime + this.betweenTime) * 1000);
+      },
+      start() {
+        if (this.minDiameter < 0 || this.maxDiameter < 0 || this.animationDuration < 0) {
+          alert('参数需大于0');
+          return;
+        }
+        document.body.style.setProperty('--minDiameter', this.minDiameter);
+        document.body.style.setProperty('--maxDiameter', this.maxDiameter);
+        document.body.style.setProperty('--animation-mymove-duration', this.animationDuration);
+        this.showMenu = !this.showMenu;
+        this.doAnimation();
+      },
+      exit() {
+        window.require &&
+          window.require('electron') &&
+          window.require("electron").ipcRenderer.send('app-quit');
+      },
+      stop() {
+        this.stopAnimation();
+      },
+      doAnimation() {
+        this.stopAnimation();
+        this.count = 0;
+        setTimeout(() => {
+          var animationDiv = document.getElementById("box");
+          this.addAni();
+        }, this.delay * 1000);
+      },
+      stopAnimation() {
+        clearTimeout(this.timer1);
+        clearTimeout(this.timer2);
+        this.removeAni();
+      },
+      removeAni() {
+        var animationDiv = document.getElementById("box");
+        animationDiv.style.opacity = 0;
+        animationDiv.style.animation = '';
+        animationDiv.style.webkitAnimation = '';
+      },
+      addAni() {
+        var animationDiv = document.getElementById("box");
+        animationDiv.style.opacity = 1;
+        animationDiv.style.animation = this.moveAnimation;
+        animationDiv.style.webkitAnimation = this.moveAnimation;
+      }
+    },
+  })
+</script>
+
+</html>
