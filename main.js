@@ -5,26 +5,36 @@ const debug = /--debug/.test(process.argv[2])
 
 const ipc = electron.ipcMain   //页面与main.js通信
 
-let mainWindow = null;
-const shouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
-  if (mainWindow) {
-    if (mainWindow.isMinimized()) mainWindow.restore()
-    mainWindow.focus()
-  }
-})
+const express = require('express')();
+const http = require('http').Server(express);
+const io = require('socket.io')(http);
+const port = 8099; // socket监听的端口
 
-if (shouldQuit) {
-  app.quit()
-}
+// 修改为只在展示端查看
+http.listen(port, '0.0.0.0', function () {
+  console.log(`listening on *:${port}`);
+});
+
+var mainWindow = null;
+// const shouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
+//   if (mainWindow) {
+//     if (mainWindow.isMinimized()) mainWindow.restore()
+//     mainWindow.focus()
+//   }
+// })
+
+// if (shouldQuit) {
+//   app.quit()
+// }
 
 function createWindow() {
-  let options = {
+  var options = {
     autoHideMenuBar: true,
     skipTaskbar: true,
     fullscreen: true,
     fullscreenable: true,
-    webSecurity: false,
     webPreferences: {
+      webSecurity: false,
       preload: true,
     },
     // icon: path.join(__dirname, 'public/icons/png/64x64.png')
@@ -77,6 +87,20 @@ function createWindow() {
   mainWindow.on('leave-full-screen', function () {
     mainWindow.setFullScreen(true)
   })
+
+  mainWindow.webContents.on('crashed', (event, killed) => {
+    mainWindow.reload()
+  })
+
+  io.on('connection', function (socket) {
+    socket.emit('news', { hello: 'world' });
+    socket.on('my other event', function (data) {
+      console.log(data);
+    });
+    socket.on('msg', function (data) {
+      mainWindow.webContents.send('msg', data);
+    })
+  });
 }
 
 app.on('ready', function () {
@@ -95,6 +119,9 @@ app.on('activate', function () {
     createWindow()
   }
 })
+// app.on('quit', function () {
+//   process.exit(0);
+// })
 
 // 应用退出
 ipc.on('app-quit', (event, index) => {

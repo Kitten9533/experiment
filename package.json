@@ -6,9 +6,17 @@
   "description": "description",
   "scripts": {
     "start": "electron . --debug",
-    "build": "node packager.js"
+    "build": "node packager.js",
+    "build:copy": "node packagerSettings.js && node packagerIndex.js",
+    "build:all": "node ./build/index/packager.index.js && node ./build/settings/packager.settings.js",
+    "copy": "node packagerSettings.js && node packagerIndex.js && node ./build/index/packager.index.js && node ./build/settings/packager.settings.js",
+    "build:index": "node packagerIndex.js && node ./build/index/packager.index.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "express": "^4.16.4",
+    "socket.io": "^2.2.0",
+    "socket.io-client": "^2.2.0"
+  },
   "devDependencies": {
     "electron": "^2.0.7",
     "electron-packager": "^12.2.0"

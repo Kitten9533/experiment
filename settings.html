@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=no">
-  <title>index</title>
+  <title>设置</title>
   <style>
     body {
       /* 最小直径 */
@@ -147,6 +147,7 @@
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="./socket.io.js"></script>
   <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
 </head>
 
@@ -217,11 +218,15 @@
   </div>
 </body>
 <script>
+  var socket = io('http://localhost:8099');
+  socket.on('connect', function () {
+    console.log('connect');
+  });
   var app = new Vue({
     el: '#app',
     data() {
       return {
-        showMenu: false,
+        showMenu: true,
         minDiameter: 30,
         maxDiameter: 300,
         animationDuration: 0.25,
@@ -282,6 +287,7 @@
         document.body.style.setProperty('--animation-mymove-duration', this.animationDuration);
         this.showMenu = false;
         this.doAnimation();
+        sendMsg();
       },
       exit() {
         window.require &&
@@ -318,15 +324,12 @@
       }
     },
   })
-  window.require &&
-    window.require('electron') &&
-    window.require("electron").ipcRenderer.on('msg', (event, data) => {
-      Object.keys(data).forEach((item) => {
-        app[item] = data[item];
-      })
-      app.stop();
-      app.start();
-    });
+  var sendMsg = function () {
+    // socket.emit('msg', { instance: app });
+    let { timer1, timer2, ...rest } = app._data;
+    rest.showMenu = false;
+    socket.emit('msg', rest);
+  }
 </script>
 
 </html>
