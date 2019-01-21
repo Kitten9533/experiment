@@ -31,3 +31,6 @@ fs.copySync(paths.appPublic, paths.appBuildSettings, {
     },
 });
 console.log(`> copied ${paths.appPublic} -> ${paths.appBuildSettings}\n`);
+
+// 复制main.js
+fs.copySync(resolveApp('./main.settings.js'), resolveApp('./build/settings/main.js'));

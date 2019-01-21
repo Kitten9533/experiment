@@ -24,5 +24,8 @@ module.exports = {
     resolveApp('./packagerSettings.js'),
     resolveApp('./README.md'),
     resolveApp('./paths.js'),
+    resolveApp('./main.index.js'),
+    resolveApp('./main.settings.js'),
+    resolveApp('./main.js'),
   ],
 };
