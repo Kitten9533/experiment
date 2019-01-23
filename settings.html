@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=no">
-  <title>设置</title>
+  <title>设置端</title>
   <style>
     body {
       /* 最小直径 */
@@ -127,6 +127,7 @@
     }
     .menu-button{
       width: 100%;
+      margin-bottom: 3px;
     }
     .menu-button .hide-btn, 
     .menu-button .start-btn,
@@ -189,9 +190,11 @@
         </div>
         <div class="menu-button">
           <div class="start-btn" @click="start">开始</div>
-          <!-- <div class="stop-btn" @click="stop">停止</div> -->
           <div class="hide-btn" @click="toggle">隐藏</div>
           <div class="hide-btn" @click="exit">退出应用</div>
+        </div>
+        <div class="menu-button">
+          <div class="stop-btn" @click="toggleFullScreen">全屏切换</div>
         </div>
         <div class="menu-item">
           <p class="item-label-desc">&nbsp;</p>
@@ -255,6 +258,11 @@
     methods: {
       toggle() {
         this.showMenu = !this.showMenu;
+      },
+      toggleFullScreen() {
+        window.require &&
+          window.require('electron') &&
+          window.require("electron").ipcRenderer.send('toggle-full-screen');
       },
       animationend() {
         var animationDiv = document.getElementById("box");

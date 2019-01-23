@@ -31,7 +31,7 @@ function createWindow() {
   var options = {
     autoHideMenuBar: true,
     skipTaskbar: true,
-    fullscreen: true,
+    fullscreen: false,
     fullscreenable: true,
     webPreferences: {
       webSecurity: false,
@@ -84,10 +84,6 @@ function createWindow() {
     mainWindow.restore()
   })
 
-  mainWindow.on('leave-full-screen', function () {
-    mainWindow.setFullScreen(true)
-  })
-
   mainWindow.webContents.on('crashed', (event, killed) => {
     mainWindow.reload()
   })
@@ -126,4 +122,8 @@ app.on('quit', function () {
 // 应用退出
 ipc.on('app-quit', (event, index) => {
   app.quit()
+})
+
+ipc.on('toggle-full-screen', (event) => {
+  mainWindow.setFullScreen(!mainWindow.isFullScreen());
 })

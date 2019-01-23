@@ -31,7 +31,7 @@ function createWindow() {
   var options = {
     autoHideMenuBar: true,
     skipTaskbar: true,
-    fullscreen: true,
+    fullscreen: false,
     fullscreenable: true,
     webPreferences: {
       webSecurity: false,
@@ -54,6 +54,7 @@ function createWindow() {
 
   // and load the index.html of the app.
   mainWindow.loadFile('index.html')
+  // mainWindow.loadFile('settings.html')
 
   if (debug) { // 发布后可以通过配置xml来显示控制台
     mainWindow.webContents.openDevTools();
@@ -83,11 +84,7 @@ function createWindow() {
   mainWindow.on('minimize', function () {
     mainWindow.restore()
   })
-
-  mainWindow.on('leave-full-screen', function () {
-    mainWindow.setFullScreen(true)
-  })
-
+  
   mainWindow.webContents.on('crashed', (event, killed) => {
     mainWindow.reload()
   })
@@ -126,4 +123,8 @@ app.on('activate', function () {
 // 应用退出
 ipc.on('app-quit', (event, index) => {
   app.quit()
+})
+
+ipc.on('toggle-full-screen', (event) => {
+  mainWindow.setFullScreen(!mainWindow.isFullScreen());
 })
